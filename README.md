@@ -2,7 +2,7 @@
 
 A Python-based behavioral simulation that models the interactions between dogs, humans, squirrels, toys, and food in a virtual environment. The simulation accounts for seasonal changes and tracks various aspects of dog behavior.
 
-![alt text](image.png)
+![alt text](assets/image.png)
 
 ## Overview
 
