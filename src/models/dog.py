@@ -4,21 +4,24 @@ dog.py: implements the dog object. Extends from the animal parent class.
 '''
 
 import math, random
-from animal import *
-from toy import *
-from foodbowl import *
+from src.models.animal import *
+from src.models.toy import *
+from src.models.foodbowl import *
 import matplotlib.pyplot as plt
 import matplotlib.patches as pat
 import numpy as np
 
-# Flips the map coordinates.
-def flip_coords(position, LIMITS):
-    return((position[1],position[0]))
+# Import utils
+from ..utils.helper import flip_coords, distance
 
-# Python formula to find distance between two points
-# REF: https://www.w3resource.com/python-exercises/python-basic-exercise-40.php
-def distance(point1, point2):
-    return math.sqrt(((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2))
+# # Flips the map coordinates.
+# def flip_coords(position, LIMITS):
+#     return((position[1],position[0]))
+
+# # Python formula to find distance between two points
+# # REF: https://www.w3resource.com/python-exercises/python-basic-exercise-40.php
+# def distance(point1, point2):
+#     return math.sqrt(((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2))
 
 # Class definition. Extends from animal class.
 class Dog(Animal):

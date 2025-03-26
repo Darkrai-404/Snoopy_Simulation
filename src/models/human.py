@@ -5,14 +5,8 @@ human.py: models the human object.
 import random, math
 import matplotlib.pyplot as plt
 import matplotlib.patches as pat
+from ..utils.helper import flip_coords, distance
 
-def flip_coords(position, LIMITS):
-    return (position[1], position[0])
-
-# Python formula to find distance between two points
-# REF: https://www.w3resource.com/python-exercises/python-basic-exercise-40.php
-def distance(point1, point2):
-    return math.sqrt(((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2))
 
 class Human:
     def __init__(self, name, relation, position):

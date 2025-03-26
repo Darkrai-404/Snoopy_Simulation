@@ -1,9 +1,17 @@
 import unittest
-from dog import *
-from human import *
-from squirrel import *
+import sys
+import os
 
-class TestClass(unittest.TestCase):
+# Add src directory to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from src.models.dog import Dog
+from src.models.human import Human
+from src.models.squirrel import Squirrel
+from src.models.toy import Toy
+from src.models.foodbowl import FoodBowl
+
+class TestModels(unittest.TestCase):
     def test_move_towards_toy(self):
         dog = Dog("Billy", 5, "Brown/White", (0, 0))
 

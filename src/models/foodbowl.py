@@ -5,9 +5,7 @@ foodbowl.py: This class models the foodbowl which is dropped by the humans
 import matplotlib.patches as pat
 import numpy as np
 
-# Flips the coordinates
-def flip_coords(position, LIMITS):
-    return((position[1],position[0]))
+from ..utils.helper import flip_coords
 
 # Class definition
 class FoodBowl:

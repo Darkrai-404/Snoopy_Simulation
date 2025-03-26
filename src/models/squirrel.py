@@ -3,16 +3,11 @@ squirrel.py: models the squirrel object. Extends from the animal parent class.
 '''
 
 import random, math
-from animal import Animal
+from src.models.animal import Animal
 import matplotlib.pyplot as plt
 import matplotlib.patches as pat
 
-def distance(point1, point2):
-    return math.sqrt(((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2))
-
-# Flips the map coordinates
-def flip_coords(position, LIMITS):
-    return((position[1],position[0]))
+from ..utils.helper import flip_coords, distance
 
 # Class definition. Extends from the animal class
 class Squirrel(Animal):

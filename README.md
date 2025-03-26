@@ -64,7 +64,7 @@ The simulation uses an object-oriented approach with inheritance to model the di
 
 3. Run the simulation:
    ```
-   python snoo.py
+   python run.py
    ```
 
 4. When prompted, provide the paths to the CSV files:
@@ -134,3 +134,17 @@ The simulation produces a CSV file (`Simulation_Analytics.csv`) with data on:
 - More complex nutrition and health tracking
 - Relationship development between dogs and strangers
 - Additional breed-specific behaviors
+
+## Simulation Images
+
+**Simulation Snippet during Summer**
+
+![alt text](assets/sim1.png)
+
+**Simulation Snippet during Winter**
+
+![alt text](assets/sim2.png)
+
+**Simulation Output Snippet**
+
+![alt text](assets/sim3.png)

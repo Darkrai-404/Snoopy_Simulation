@@ -1,15 +1,22 @@
 '''
-snoo.py: The main file which houses the simulation loop.
+main.py: The main file which houses the simulation loop.
 The skeleton of this code was received as a part of practical test 3 in FoP Semester 1 2024
 '''
+import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
-import csv, time, math
-from dog import *
-from squirrel import *
-from human import *
-from foodbowl import *
+import csv
+import time
+import math, random
+
+# Import from our models
+from .models.dog import Dog
+from .models.squirrel import Squirrel
+from .models.human import Human
+from .models.foodbowl import FoodBowl
+from .models.toy import Toy
+from .utils.helper import distance
 
 def collect_dog_data(dog_animals, timestep):
     dog_data = []   # Stores data for every dog
@@ -81,7 +88,7 @@ def take_dog_input():
     dogs = []  # Empty list to store dogs
     while not valid_file:
         try:
-            dogfile = input("Please input your dog csv (eg. dogs.csv): ")
+            dogfile = input("Please input your dog csv (eg. data/scenario1/dogs.csv): ")
             with open(dogfile, 'r', newline='') as dogs_csv:  
                 reader = csv.DictReader(dogs_csv)
                 for row in reader:
@@ -95,7 +102,7 @@ def take_dog_input():
         
         except FileNotFoundError:
             print("\nFile is not found. Please check file name and format")
-            print("File input example: <filename>.csv\n")
+            print("File input example: data/scenario1/dogs.csv\n")
 
     return dogs
 
@@ -107,7 +114,7 @@ def take_squirrel_input():
     squirrels = []  # Empty list to store squirrels
     while not valid_file:
         try:
-            squirrel_file = input("Please input your squirrel csv (eg. squirrels.csv): ")
+            squirrel_file = input("Please input your squirrel csv (eg. data/scenario1/squirrels.csv): ")
             with open(squirrel_file, 'r', newline='') as squirrels_csv:  
                 reader = csv.DictReader(squirrels_csv)
                 for row in reader:
@@ -119,7 +126,7 @@ def take_squirrel_input():
         
         except FileNotFoundError:
             print("\nFile is not found. Please check file name and format")
-            print("File input example: <filename>.csv\n")
+            print("File input example: data/scenario1/squirrels.csv\n")
 
     return squirrels
 
@@ -130,7 +137,7 @@ def take_human_input():
     humans = []  # Empty list to store humans
     while not valid_file:
         try:
-            human_file = input("Please input your human csv (eg. humans.csv): ")
+            human_file = input("Please input your human csv (eg. data/scenario1/humans.csv): ")
             with open(human_file, 'r', newline='') as humans_csv:  
                 reader = csv.DictReader(humans_csv)
                 for row in reader:
@@ -143,15 +150,20 @@ def take_human_input():
         
         except FileNotFoundError:
             print("\nFile is not found. Please check file name and format")
-            print("File input example: <filename>.csv\n")
+            print("File input example: data/scenario1/humans.csv\n")
 
     return humans
 
 def menu():
-    with open("image.txt", "r") as file:
-        art = file.read()
-        print(art)
-
+    try:
+        with open("data/image.txt", "r") as file:
+            art = file.read()
+            print(art)
+    except FileNotFoundError:
+        print("ASCII art file not found. Continuing without it.")
+        print("=" * 40)
+        print("       SNOOPY SIMULATION       ")
+        print("=" * 40)
   
 def take_foodbowl_input():
     # Doc: https://realpython.com/lessons/reading-csvs-pythons-csv-module/
@@ -160,7 +172,7 @@ def take_foodbowl_input():
     food_bowls = []
     while not valid_file:
         try:
-            food_bowl_file = input("Please input your food bowl csv (eg. foodbowls.csv): ")
+            food_bowl_file = input("Please input your food bowl csv (eg. data/scenario1/foodbowls.csv): ")
             with open(food_bowl_file, 'r', newline='') as food_bowl_csv:
                 reader = csv.DictReader(food_bowl_csv)
                 for row in reader:
@@ -168,7 +180,7 @@ def take_foodbowl_input():
             valid_file = True
         except FileNotFoundError:
             print("\nFile is not found. Please check file name and format")
-            print("File input example: <filename>.csv\n")
+            print("File input example: data/scenario1/foodbowls.csv\n")
 
     return food_bowls
 
@@ -179,7 +191,7 @@ def take_toy_input():
     toys = []  # Empty list to store dogs
     while not valid_file:
         try:
-            toy_file = input("Please input your toy csv (eg. toys.csv): ")
+            toy_file = input("Please input your toy csv (eg. data/scenario1/toys.csv): ")
             with open(toy_file, 'r', newline='') as toys_csv:  
                 reader = csv.DictReader(toys_csv)
                 for row in reader:
@@ -191,14 +203,9 @@ def take_toy_input():
         
         except FileNotFoundError:
             print("\nFile is not found. Please check file name and format")
-            print("File input example: <filename>.csv\n")
+            print("File input example: data/scenario1/toys.csv\n")
 
     return toys
-
-# Python formula to find distance between two points
-# REF: https://www.w3resource.com/python-exercises/python-basic-exercise-40.php
-def distance(point1, point2):
-    return math.sqrt(((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2))
 
 # Generate the legends
 def generate_legend_text(dogs, food_bowls, toys):
@@ -237,6 +244,9 @@ def generate_legend_text(dogs, food_bowls, toys):
 
 
 def main():
+    # Create output directory if it doesn't exist
+    os.makedirs("output", exist_ok=True)
+    
     size = (220,190) # map size
     season = "Winter"
     yard = build_yard2(size, season)
@@ -277,6 +287,9 @@ def main():
     plt.ion() #interactive mode
     fig, axs = plt.subplots(figsize=(15,10))
     
+    # Path for analytics output
+    analytics_file = os.path.join('output', 'Simulation_Analytics.csv')
+    
     # Main simulation loop
     for timestep in range(3000):
         axs.clear()  # Clear the subplot
@@ -284,7 +297,7 @@ def main():
         # Collecting Simulation Data
         dog_data = collect_dog_data(dog_animals, timestep)
         # Writing the CSV output
-        with open('Simulation_Analytics.csv', 'a', newline='') as csvfile:
+        with open(analytics_file, 'a', newline='') as csvfile:
             fieldnames = ['Name', 'Timestep', 'Toys_Interacted_With', 'Times_Buried_Toy', 'Times_Dropped_Toy', 'Percentage_Toy_Buried', 'Percentage_Toy_Dropped', 'Dug_Up_Toy_Via_Smell', 'Food_Intake_Winter', 'Food_Intake_Summer']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # Writing header for first timestep
@@ -300,11 +313,11 @@ def main():
 
             # Hungry
             if d.is_hungry() and d.find_nearest_foodbowl(food_bowls) is not None:
-                d.detect_surrounding(human, squirrel_animals, True) # Stop Listening to Whistle
+                d.detect_surrounding(humans, squirrel_animals, True) # Stop Listening to Whistle
                 d.interact_with_food(food_bowls, season)
 
             elif d.is_bored():
-                d.detect_surrounding(human, squirrel_animals, True) # Stop Listening to Whistle
+                d.detect_surrounding(humans, squirrel_animals, True) # Stop Listening to Whistle
 
                 if d.get_has_toy():
                     if(random.random() < 0.5):
@@ -386,7 +399,6 @@ def main():
         fig.canvas.flush_events()    # to refresh plot in the same window
         time.sleep(.01)
         axs.clear()
-
 
 
 if __name__ == "__main__":
